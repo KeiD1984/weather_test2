@@ -572,6 +572,55 @@ function geoError(){
 
 }
 
+async function displayLocation(
+ lat,
+ lon
+){
+
+ if(marker){
+
+  map.removeLayer(marker);
+
+ }
+
+ marker =
+ L.marker(
+  [lat,lon]
+ )
+ .addTo(map);
+
+ map.setView(
+  [lat,lon],
+  11
+ );
+
+ try{
+
+  const geoUrl =
+  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+
+  const geoRes =
+  await fetch(geoUrl);
+
+  const geo =
+  await geoRes.json();
+
+  document.getElementById(
+   "place"
+  ).innerHTML =
+  geo.display_name;
+
+ }catch{
+
+  document.getElementById(
+   "place"
+  ).innerHTML =
+  `${lat}, ${lon}`;
+
+ }
+
+}
+
 async function showManualLocation(){
 
  const lat =
