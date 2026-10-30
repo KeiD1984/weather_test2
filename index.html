@@ -163,6 +163,42 @@ checked>
 
 </div>
 
+<div class="card">
+
+<h3>📌 指定地点表示</h3>
+
+緯度<br>
+
+<input
+id="manualLat"
+type="number"
+step="0.000001"
+placeholder="34.3965"
+style="width:100%;">
+
+<br><br>
+
+経度<br>
+
+<input
+id="manualLon"
+type="number"
+step="0.000001"
+placeholder="132.4596"
+style="width:100%;">
+
+<br><br>
+
+<button onclick="showManualLocation()">
+指定地点を表示
+</button>
+
+<button onclick="update()">
+現在地へ戻る
+</button>
+
+</div>
+
 <div id="rainStatus"
 class="card statusBox">
 
@@ -532,6 +568,42 @@ function geoError(){
 
  alert(
  "位置情報を取得できません"
+ );
+
+}
+
+async function showManualLocation(){
+
+ const lat =
+ Number(
+  document.getElementById(
+   "manualLat"
+  ).value
+ );
+
+ const lon =
+ Number(
+  document.getElementById(
+   "manualLon"
+  ).value
+ );
+
+ if(
+  isNaN(lat) ||
+  isNaN(lon)
+ ){
+
+  alert(
+   "緯度・経度を入力してください"
+  );
+
+  return;
+
+ }
+
+ await displayLocation(
+  lat,
+  lon
  );
 
 }
