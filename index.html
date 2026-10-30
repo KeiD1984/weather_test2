@@ -450,7 +450,9 @@ async function update(){
 
 }
 
-async function success(position){
+async function success(
+ position
+){
 
  const lat =
  position.coords.latitude;
@@ -458,109 +460,10 @@ async function success(position){
  const lon =
  position.coords.longitude;
 
-await loadAroundRain(
- lat,
- lon
-);
-
- if(!map){
-
-  map =
-  L.map("map")
-  .setView([lat,lon],11);
-
-  L.tileLayer(
-   "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-   {
-    attribution:"© OpenStreetMap"
-   }
-  ).addTo(map);
-
- }
-
- if(marker){
-
-  map.removeLayer(marker);
-
- }
-
- marker =
- L.marker([lat,lon])
- .addTo(map);
-
- map.setView([lat,lon],11);
-
- try{
-
-  const geoUrl =
-  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-
-  const geoRes =
-  await fetch(geoUrl);
-
-  const geo =
-  await geoRes.json();
-
-  document.getElementById(
-  "place"
-  ).innerHTML =
-  geo.display_name;
-
- }catch{
-
-  document.getElementById(
-  "place"
-  ).innerHTML =
-  `${lat}, ${lon}`;
-
- }
-
- try{
-
-  const weatherUrl =
-  `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=rain`;
-
-  const weatherRes =
-  await fetch(weatherUrl);
-
-  const weather =
-  await weatherRes.json();
-
-  const rain =
-  weather.current.rain || 0;
-
-  const info =
-  rainInfo(rain);
-
-  const rainBox =
-  document.getElementById(
-  "rainStatus"
-  );
-
-  rainBox.className =
-  "card statusBox " +
-  info.cls;
-
-  document.getElementById(
-  "rainValue"
-  ).innerHTML =
-  rain + " mm/h";
-
-  document.getElementById(
-  "rainComment"
-  ).innerHTML =
-  info.text;
-
- }catch{
-
-  document.getElementById(
-  "rainValue"
-  ).innerHTML =
-  "取得失敗";
-
- }
-
- updateTime();
+ await displayLocation(
+  lat,
+  lon
+ );
 
 }
 
@@ -577,9 +480,13 @@ async function displayLocation(
  lon
 ){
 
+ // マーカー更新
+
  if(marker){
 
-  map.removeLayer(marker);
+  map.removeLayer(
+   marker
+  );
 
  }
 
@@ -594,30 +501,112 @@ async function displayLocation(
   11
  );
 
+ // 地名取得
+
  try{
 
   const geoUrl =
   `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
 
   const geoRes =
-  await fetch(geoUrl);
+  await fetch(
+   geoUrl
+  );
 
   const geo =
   await geoRes.json();
 
-  document.getElementById(
+  document
+  .getElementById(
    "place"
-  ).innerHTML =
+  )
+  .innerHTML =
   geo.display_name;
 
  }catch{
 
-  document.getElementById(
+  document
+  .getElementById(
    "place"
-  ).innerHTML =
+  )
+  .innerHTML =
   `${lat}, ${lon}`;
 
  }
+
+ // 降水量取得
+
+ try{
+
+  const weatherUrl =
+  `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=rain`;
+
+  const weatherRes =
+  await fetch(
+   weatherUrl
+  );
+
+  const weather =
+  await weatherRes.json();
+
+  const rain =
+  weather.current?.rain ?? 0;
+
+  const info =
+  rainInfo(
+   rain
+  );
+
+  const rainBox =
+  document.getElementById(
+   "rainStatus"
+  );
+
+  rainBox.className =
+   "card statusBox " +
+   info.cls;
+
+  document
+  .getElementById(
+   "rainValue"
+  )
+  .innerHTML =
+   rain +
+   " mm/h";
+
+  document
+  .getElementById(
+   "rainComment"
+  )
+  .innerHTML =
+   info.text;
+
+ }catch{
+
+  document
+  .getElementById(
+   "rainValue"
+  )
+  .innerHTML =
+   "取得失敗";
+
+  document
+  .getElementById(
+   "rainComment"
+  )
+  .innerHTML =
+   "データ取得失敗";
+
+ }
+
+ // 周辺2km降水状況
+
+ await loadAroundRain(
+  lat,
+  lon
+ );
+
+ updateTime();
 
 }
 
