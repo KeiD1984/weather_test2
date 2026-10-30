@@ -561,8 +561,8 @@ async function displayLocation(
 
  try{
 
-  const weatherUrl =
-  `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=rain`;
+ const weatherUrl =
+`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=precipitation`;
 
   const weatherRes =
   await fetch(
@@ -573,7 +573,7 @@ async function displayLocation(
   await weatherRes.json();
 
   const rain =
-  weather.current?.rain ?? 0;
+  weather.current?.precipitation ?? 0;
 
   const info =
   rainInfo(
@@ -817,7 +817,7 @@ async function loadAroundRain(
    const p = points[key];
 
    const url =
-   `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=rain`;
+   `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation`;
 
    const res =
    await fetch(url);
@@ -826,7 +826,7 @@ async function loadAroundRain(
    await res.json();
 
    const rain =
-   data.current?.rain ?? 0;
+   data.current?.precipitation ?? 0;
 
    const cell =
    document.getElementById(key);
