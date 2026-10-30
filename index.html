@@ -480,6 +480,27 @@ async function displayLocation(
  lon
 ){
 
+ // 地図が未作成なら作成
+
+ if(!map){
+
+  map =
+  L.map("map")
+  .setView(
+   [lat,lon],
+   11
+  );
+
+  L.tileLayer(
+   "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+   {
+    attribution:
+    "© OpenStreetMap"
+   }
+  ).addTo(map);
+
+ }
+
  // マーカー更新
 
  if(marker){
@@ -523,7 +544,9 @@ async function displayLocation(
   .innerHTML =
   geo.display_name;
 
- }catch{
+ }catch(e){
+
+  console.error(e);
 
   document
   .getElementById(
@@ -581,7 +604,9 @@ async function displayLocation(
   .innerHTML =
    info.text;
 
- }catch{
+ }catch(e){
+
+  console.error(e);
 
   document
   .getElementById(
@@ -599,12 +624,30 @@ async function displayLocation(
 
  }
 
- // 周辺2km降水状況
+ // 周辺2km監視
 
- await loadAroundRain(
-  lat,
-  lon
- );
+ try{
+
+  if(
+   typeof loadAroundRain
+   === "function"
+  ){
+
+   await loadAroundRain(
+    lat,
+    lon
+   );
+
+  }
+
+ }catch(e){
+
+  console.error(
+   "loadAroundRain error",
+   e
+  );
+
+ }
 
  updateTime();
 
