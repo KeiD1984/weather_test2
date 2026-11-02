@@ -292,6 +292,39 @@ class="value">
 
 <div id="map"></div>
 
+<div class="card">
+
+<h3>☔ 広島県監視地点</h3>
+
+<table
+id="pointTable"
+style="
+width:100%;
+border-collapse:collapse;
+text-align:center;
+">
+
+<tr>
+ <th>地点</th>
+ <th>降水量</th>
+</tr>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h3>🌧 降水量ランキング</h3>
+
+<div id="rainRanking">
+
+取得中...
+
+</div>
+
+</div>
+
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -301,6 +334,51 @@ class="value">
 let map;
 let marker;
 let timer;
+
+let map;
+let marker;
+let timer;
+
+let manualMarker;
+let pointMarkers = [];
+
+const fixedPoints = [
+ {
+  name:"広島駅",
+  lat:34.3977,
+  lon:132.4757
+ },
+ {
+  name:"平和記念公園",
+  lat:34.3929,
+  lon:132.4523
+ },
+ {
+  name:"宮島",
+  lat:34.2954,
+  lon:132.3198
+ },
+ {
+  name:"広島空港",
+  lat:34.4361,
+  lon:132.9194
+ },
+ {
+  name:"大和ミュージアム",
+  lat:34.2365,
+  lon:132.5656
+ },
+ {
+  name:"福山駅",
+  lat:34.4897,
+  lon:133.3625
+ },
+ {
+  name:"三次市 巴橋",
+  lat:34.8057,
+  lon:132.8514
+ }
+];
 
 function openNowcast(){
 
@@ -624,32 +702,48 @@ async function displayLocation(
 
  }
 
- // 周辺2km監視
+// 周辺2km監視
 
- try{
+try{
 
-  if(
-   typeof loadAroundRain
-   === "function"
-  ){
+ if(
+  typeof loadAroundRain
+  === "function"
+ ){
 
-   await loadAroundRain(
-    lat,
-    lon
-   );
-
-  }
-
- }catch(e){
-
-  console.error(
-   "loadAroundRain error",
-   e
+  await loadAroundRain(
+   lat,
+   lon
   );
 
  }
 
- updateTime();
+}catch(e){
+
+ console.error(
+  "loadAroundRain error",
+  e
+ );
+
+}
+
+// 監視地点更新
+
+try{
+
+ await loadFixedPoints();
+
+}catch(e){
+
+ console.error(
+  "loadFixedPoints error",
+  e
+ );
+
+}
+
+updateTime();
+
 
 }
 
@@ -686,6 +780,24 @@ async function showManualLocation(){
   lat,
   lon
  );
+
+ if(manualMarker){
+
+ map.removeLayer(
+  manualMarker
+ );
+
+}
+
+manualMarker =
+L.marker(
+ [lat,lon]
+)
+.addTo(map)
+.bindPopup(
+ "指定地点"
+)
+.openPopup();
 
 }
 
@@ -730,6 +842,115 @@ setInterval(
  update,
  300000
 );
+
+async function loadFixedPoints(){
+
+ if(!map){
+  return;
+ }
+
+ const table =
+ document.getElementById(
+  "pointTable"
+ );
+
+ table.innerHTML =
+ `
+ <tr>
+  <th>地点</th>
+  <th>降水量</th>
+ </tr>
+ `;
+
+ pointMarkers.forEach(
+  m => map.removeLayer(m)
+ );
+
+ pointMarkers = [];
+
+ let ranking = [];
+
+ for(const p of fixedPoints){
+
+  try{
+
+   const url =
+   `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation`;
+
+   const res =
+   await fetch(url);
+
+   const data =
+   await res.json();
+
+   const rain =
+   data.current?.precipitation ?? 0;
+
+   ranking.push({
+    name:p.name,
+    rain:rain
+   });
+
+   table.innerHTML +=
+   `
+   <tr>
+    <td>${p.name}</td>
+    <td style="
+      background:${rainColor(rain)};
+      font-weight:bold;
+    ">
+      ${rain}
+    </td>
+   </tr>
+   `;
+
+   const circle =
+   L.circleMarker(
+    [p.lat,p.lon],
+    {
+      radius:12,
+      fillColor:
+       rainColor(rain),
+      color:"#000",
+      weight:1,
+      fillOpacity:0.8
+    }
+   ).addTo(map);
+
+   circle.bindPopup(
+   `
+   <b>${p.name}</b><br>
+   降水量：${rain} mm/h
+   `
+   );
+
+   pointMarkers.push(circle);
+
+  }catch(e){
+
+   console.error(e);
+
+  }
+
+ }
+
+ ranking.sort(
+ (a,b)=>
+  b.rain-a.rain
+ );
+
+ document
+ .getElementById(
+ "rainRanking"
+ )
+ .innerHTML =
+ ranking.map(
+ p =>
+ `${p.name} : ${p.rain} mm/h`
+ )
+ .join("<br>");
+
+}
 
 async function loadAroundRain(
  lat,
