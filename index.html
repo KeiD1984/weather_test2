@@ -282,52 +282,60 @@ padding:4px;
 <h4>🌩 大気不安定度（参考）</h4>
 
 <p>
-Open-Meteoの
-CAPE（対流有効位置エネルギー）と
+Open-MeteoのCAPE（対流有効位置エネルギー）と
 Showers（対流性降水）から独自算出しています。
 </p>
 
-<table style="
-width:100%;
-border-collapse:collapse;
+<pre style="
+background:#f5f5f5;
+padding:8px;
+border-radius:4px;
+font-size:12px;
+overflow:auto;
 ">
 
-<tr>
-<td>安定</td>
-<td>対流活動が起きにくい</td>
-</tr>
+CAPE 300以上   → +1
 
-<tr>
-<td>やや不安定</td>
-<td>積雲が発達する可能性あり</td>
-</tr>
+CAPE 1000以上  → +1
 
-<tr>
-<td>不安定</td>
-<td>積乱雲発達に注意</td>
-</tr>
+CAPE 2000以上  → +1
 
-<tr>
-<td>かなり不安定</td>
-<td>対流活動活発</td>
-</tr>
+Showers > 0
+（対流性降水あり） → +1
 
-<tr>
-<td>非常に不安定</td>
-<td>積乱雲発達しやすい</td>
-</tr>
+合計点
 
-</table>
+0～1点 → 安定
+
+2点    → やや不安定
+
+3点    → 不安定
+
+4点    → 非常に不安定
+
+</pre>
+
+<p>
+CAPEは積乱雲発達のポテンシャル、
+Showersは対流活動の発生状況を示します。
+</p>
+
+<p>
+本アプリではCAPEを主指標とし、
+対流性降水（Showers）が存在する場合に
+対流活動中として加点しています。
+</p>
 
 <p style="
 font-size:12px;
 color:#666;
 ">
 
-※ Open-Meteoの降水量・CAPE・Showersを利用した参考情報です。<br>
-気象予報や雷予報ではありません。
+※ Open-Meteoのデータを利用した独自指標です。<br>
+※ 気象予報・雷予報ではなく運用参考情報です。
 
 </p>
+
 
 </div>
 
@@ -530,6 +538,8 @@ function instabilityLevel(
 
  let score = 0;
 
+ // CAPEによる評価
+
  if(cape >= 300){
   score += 1;
  }
@@ -542,11 +552,9 @@ function instabilityLevel(
   score += 1;
  }
 
- if(showers >= 1){
-  score += 1;
- }
+ // 対流性降水の有無で補正
 
- if(showers >= 5){
+ if(showers > 0){
   score += 1;
  }
 
@@ -577,18 +585,11 @@ function instabilityLevel(
 
  }
 
- if(score == 4){
-
-  return {
-   text:"かなり不安定",
-   color:"#ffb74d"
-  };
-
- }
-
  return {
+
   text:"非常に不安定",
   color:"#ef5350"
+
  };
 
 }
