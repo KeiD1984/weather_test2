@@ -562,26 +562,14 @@ async function displayLocation(
 
  }
 
- // マーカー更新
+// マーカー更新
 
- if(marker){
 
-  map.removeLayer(
-   marker
-  );
+map.setView(
+ [lat,lon],
+ 11
+);
 
- }
-
- marker =
- L.marker(
-  [lat,lon]
- )
- .addTo(map);
-
- map.setView(
-  [lat,lon],
-  11
- );
 
  // 地名取得
 
@@ -635,6 +623,34 @@ async function displayLocation(
 
   const rain =
   weather.current?.precipitation ?? 0;
+
+if(marker){
+
+ map.removeLayer(
+  marker
+ );
+
+}
+
+marker =
+L.circleMarker(
+ [lat,lon],
+ {
+  radius:8,
+  fillColor:rainColor(rain),
+  color:"#000000",
+  weight:2,
+  fillOpacity:1
+ }
+)
+.addTo(map)
+.bindPopup(
+ `
+ 現在地または指定地点<br>
+ 降水量:${rain.toFixed(1)}
+ `
+);
+
 
   const cape =
   weather.hourly?.cape?.[0] ?? 0;
