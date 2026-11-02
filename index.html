@@ -64,8 +64,9 @@ button:active{
 }
 
 #map{
-  height:50vh;
+  height:60vh;
   border-radius:8px;
+  margin-bottom:10px;
 }
 
 .rain-none{
@@ -122,6 +123,8 @@ button:active{
 </header>
 
 <div class="container">
+
+<div id="map"></div>
 
 <div class="card">
 
@@ -219,81 +222,6 @@ class="value">
 
 <div class="card">
 
-<h3>☔ 周辺2km降水状況</h3>
-
-<table
-style="
-width:100%;
-text-align:center;
-border-collapse:collapse;
-">
-
-<tr>
-<td id="nw">北西</td>
-<td id="n">北</td>
-<td id="ne">北東</td>
-</tr>
-
-<tr>
-<td id="w">西</td>
-<td id="center">現在地</td>
-<td id="e">東</td>
-</tr>
-
-<tr>
-<td id="sw">南西</td>
-<td id="s">南</td>
-<td id="se">南東</td>
-</tr>
-
-</table>
-
-<div style="margin-top:10px;">
-
-<b>最大雨量地点</b><br>
-
-<span id="maxRain">
-
--
-
-</span>
-
-</div>
-
-</div>
-
-<div id="thunderStatus"
-class="card statusBox thunder-none">
-
-<h3>⚡ 雷活動度</h3>
-
-<div id="thunderValue"
-class="value">
-
-発生なし
-
-</div>
-
-</div>
-
-<div id="tornadoStatus"
-class="card statusBox tornado-none">
-
-<h3>🌪 竜巻発生確度</h3>
-
-<div id="tornadoValue"
-class="value">
-
-発生なし
-
-</div>
-
-</div>
-
-<div id="map"></div>
-
-<div class="card">
-
 <h3>☔ 広島県監視地点</h3>
 
 <table
@@ -313,17 +241,6 @@ text-align:center;
 
 </div>
 
-<div class="card">
-
-<h3>🌧 降水量ランキング</h3>
-
-<div id="rainRanking">
-
-取得中...
-
-</div>
-
-</div>
 
 </div>
 
@@ -699,29 +616,6 @@ async function displayLocation(
  }
 
 // 周辺2km監視
-
-try{
-
- if(
-  typeof loadAroundRain
-  === "function"
- ){
-
-  await loadAroundRain(
-   lat,
-   lon
-  );
-
- }
-
-}catch(e){
-
- console.error(
-  "loadAroundRain error",
-  e
- );
-
-}
 
 // 監視地点更新
 
