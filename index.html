@@ -261,6 +261,9 @@ let pointMarkers = [];
 
 let currentRain = 0;
 
+let currentInstability = "-";
+let currentInstabilityColor = "#ffffff";
+
 const fixedPoints = [
  {
   name:"広島駅",
@@ -652,12 +655,24 @@ async function displayLocation(
   weather.current?.precipitation ?? 0;
 
   const cape =
-weather.hourly?.cape?.[0] ?? 0;
+  weather.hourly?.cape?.[0] ?? 0;
 
-const showers =
-data.hourly?.showers?.[0] ?? 0;
+  const showers =
+  weather.hourly?.showers?.[0] ?? 0;
 
   currentRain = rain;
+
+  const instability =
+instabilityLevel(
+ cape,
+ showers
+);
+
+currentInstability =
+ instability.text;
+
+currentInstabilityColor =
+ instability.color;
 
   const info =
   rainInfo(
@@ -859,8 +874,8 @@ async function loadFixedPoints(){
 
   try{
 
-   const weatherUrl =
-   `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation`;
+  const weatherUrl =
+   `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation&hourly=cape,showers`;
 
    const res =
    await fetch(weatherUrl);
@@ -874,8 +889,8 @@ async function loadFixedPoints(){
    const cape =
    data.hourly?.cape?.[0] ?? 0;
 
-   const showers =
-   data.hourly?.showers?.[0] ?? 0;
+const showers =
+weather.hourly?.showers?.[0] ?? 0;
 
    ranking.push({
     name:p.name,
@@ -904,11 +919,13 @@ table.innerHTML +=
  </td>
 
  <td
- style="
- background:${instability.color};
- ">
-  ${instability.text}
- </td>
+style="
+background:${instability.color};
+font-weight:bold;
+"
+>
+${instability.text}
+</td>
 
 </tr>
 `;
@@ -948,31 +965,31 @@ pointMarkers.push(circle);
 table.innerHTML +=
 `
 <tr>
-  <td>現在地または指定地点</td>
-  <td style="
-    background:${rainColor(currentRain)};
-    font-weight:bold;
-  ">
-    ${currentRain.toFixed(1)} mm/h
-  </td>
+
+<td>
+現在地または指定地点
+</td>
+
+<td
+style="
+background:${rainColor(currentRain)};
+font-weight:bold;
+"
+>
+${currentRain.toFixed(1)} mm/h
+</td>
+
+<td
+style="
+background:${currentInstabilityColor};
+font-weight:bold;
+"
+>
+${currentInstability}
+</td>
+
 </tr>
 `;
-
- ranking.sort(
- (a,b)=>
-  b.rain-a.rain
- );
-
- document
- .getElementById(
- "rainRanking"
- )
- .innerHTML =
- ranking.map(
- p =>
- `${p.name} : ${p.rain.toFixed(1)} mm/h`
- )
- .join("<br>");
 
 }
 
@@ -1076,8 +1093,8 @@ async function loadAroundRain(
    const cape =
    data.hourly?.cape?.[0] ?? 0;
 
-   const showers
-   data.hourly?.showers?.[0] ?? 0;
+   const showers =
+   weather.hourly?.showers?.[0] ?? 0;
 
    const cell =
    document.getElementById(key);
