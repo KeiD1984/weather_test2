@@ -139,7 +139,7 @@ text-align:center;
 
 <tr>
 <th>地点</th>
-<th>降水量</th>
+<th>降水量(mm/h)</th>
 <th>大気不安定度(参考)</th>
 </tr>
 
@@ -857,7 +857,7 @@ async function loadFixedPoints(){
 `
 <tr>
  <th>地点</th>
- <th>降水量</th>
+ <th>降水量(mm/h)</th>
  <th>大気不安定度(参考)</th>
 </tr>
 `;
@@ -908,7 +908,7 @@ table.innerHTML +=
  style="
  background:${rainColor(rain)};
  ">
-  ${rain.toFixed(1)} mm/h
+  ${rain.toFixed(1)}
  </td>
 
  <td
@@ -939,7 +939,7 @@ L.circleMarker(
 circle.bindPopup(
 `
 <b>${p.name}</b><br>
-降水量：${rain.toFixed(1)} mm/h
+降水量：${rain.toFixed(1)}
 `
 );
 
@@ -966,16 +966,14 @@ table.innerHTML +=
 <td
 style="
 background:${rainColor(currentRain)};
-font-weight:bold;
 "
 >
-${currentRain.toFixed(1)} mm/h
+${currentRain.toFixed(1)}
 </td>
 
 <td
 style="
 background:${currentInstabilityColor};
-font-weight:bold;
 "
 >
 ${currentInstability}
