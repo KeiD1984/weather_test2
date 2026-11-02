@@ -138,8 +138,9 @@ text-align:center;
 ">
 
 <tr>
- <th>地点</th>
- <th>降水量</th>
+<th>地点</th>
+<th>降水量</th>
+<th>大気不安定度(参考)</th>
 </tr>
 
 </table>
@@ -433,6 +434,76 @@ function rainColor(rain){
  return "#7b1fa2";
 }
 
+function instabilityLevel(
+ cape,
+ showers
+){
+
+ let score = 0;
+
+ if(cape >= 300){
+  score += 1;
+ }
+
+ if(cape >= 1000){
+  score += 1;
+ }
+
+ if(cape >= 2000){
+  score += 1;
+ }
+
+ if(showers >= 1){
+  score += 1;
+ }
+
+ if(showers >= 5){
+  score += 1;
+ }
+
+ if(score <= 1){
+
+  return {
+   text:"安定",
+   color:"#eeeeee"
+  };
+
+ }
+
+ if(score == 2){
+
+  return {
+   text:"やや不安定",
+   color:"#b3e5fc"
+  };
+
+ }
+
+ if(score == 3){
+
+  return {
+   text:"不安定",
+   color:"#ffe082"
+  };
+
+ }
+
+ if(score == 4){
+
+  return {
+   text:"かなり不安定",
+   color:"#ffb74d"
+  };
+
+ }
+
+ return {
+  text:"非常に不安定",
+  color:"#ef5350"
+ };
+
+}
+
 async function update(){
 
  navigator.geolocation.getCurrentPosition(
@@ -566,8 +637,9 @@ async function displayLocation(
 
  try{
 
- const weatherUrl =
-`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=precipitation`;
+
+ const url =
+ `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation&hourly=cape,showers`; 
 
   const weatherRes =
   await fetch(
@@ -579,6 +651,12 @@ async function displayLocation(
 
   const rain =
   weather.current?.precipitation ?? 0;
+
+  const cape =
+data.hourly?.cape?.[0] ?? 0;
+
+const showers =
+data.hourly?.showers?.[0] ?? 0;
 
   currentRain = rain;
 
@@ -798,18 +876,36 @@ async function loadFixedPoints(){
     rain:rain
    });
 
-   table.innerHTML +=
-   `
-   <tr>
-    <td>${p.name}</td>
-    <td style="
-  background:${rainColor(rain)};
-  font-weight:bold;
-">
+   const instability =
+instabilityLevel(
+ cape,
+ showers
+);
+
+table.innerHTML +=
+`
+<tr>
+
+ <td>
+  ${p.name}
+ </td>
+
+ <td
+ style="
+ background:${rainColor(rain)};
+ ">
   ${rain.toFixed(1)} mm/h
-</td>
-   </tr>
-   `;
+ </td>
+
+ <td
+ style="
+ background:${instability.color};
+ ">
+  ${instability.text}
+ </td>
+
+</tr>
+`;
 
   const circle =
 L.circleMarker(
