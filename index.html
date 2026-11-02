@@ -227,24 +227,6 @@ style="width:100%;">
 
 </div>
 
-<div id="rainStatus"
-class="card statusBox">
-
-<h3>☔ 降水量</h3>
-
-<div id="rainValue"
-class="value">
-
-取得中...
-
-</div>
-
-<div id="rainComment">
--
-</div>
-
-</div>
-
 
 </div>
 
@@ -674,53 +656,9 @@ currentInstability =
 currentInstabilityColor =
  instability.color;
 
-  const info =
-  rainInfo(
-   rain
-  );
-
-  const rainBox =
-  document.getElementById(
-   "rainStatus"
-  );
-
-  rainBox.className =
-   "card statusBox " +
-   info.cls;
-
-  document
-.getElementById(
- "rainValue"
-)
-.innerHTML =
- rain.toFixed(1) +
- " mm/h";
-
-
-  document
-  .getElementById(
-   "rainComment"
-  )
-  .innerHTML =
-   info.text;
-
  }catch(e){
 
   console.error(e);
-
-  document
-  .getElementById(
-   "rainValue"
-  )
-  .innerHTML =
-   "取得失敗";
-
-  document
-  .getElementById(
-   "rainComment"
-  )
-  .innerHTML =
-   "データ取得失敗";
 
  }
 
