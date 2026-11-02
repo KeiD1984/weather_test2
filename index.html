@@ -262,7 +262,7 @@ let pointMarkers = [];
 let currentRain = 0;
 
 let currentInstability = "-";
-let currentInstabilityColor = "#ffffff";
+let currentInstabilityColor = "#eeeeee";
 
 const fixedPoints = [
  {
@@ -874,8 +874,8 @@ async function loadFixedPoints(){
 
   try{
 
-  const weatherUrl =
-   `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation&hourly=cape,showers`;
+const weatherUrl =
+`https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation&hourly=cape,showers`;
 
    const res =
    await fetch(weatherUrl);
@@ -890,7 +890,7 @@ async function loadFixedPoints(){
    data.hourly?.cape?.[0] ?? 0;
 
 const showers =
-weather.hourly?.showers?.[0] ?? 0;
+data.hourly?.showers?.[0] ?? 0;
 
    ranking.push({
     name:p.name,
@@ -992,11 +992,6 @@ ${currentInstability}
 `;
 
 }
-
-async function loadAroundRain(
- lat,
- lon
-){
 
  const dLat = 2 / 111;
 
