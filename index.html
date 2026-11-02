@@ -128,6 +128,27 @@ button:active{
 
 <div class="card">
 
+<h3>☔ 広島県監視地点</h3>
+
+<table
+id="pointTable"
+style="
+width:100%;
+border-collapse:collapse;
+text-align:center;
+">
+
+<tr>
+ <th>地点</th>
+ <th>降水量</th>
+</tr>
+
+</table>
+
+</div>
+
+<div class="card">
+
 <label>
 <input
 type="checkbox"
@@ -143,11 +164,7 @@ checked>
 </button>
 
 <button onclick="openNowcast()">
-雨雲の動き
-</button>
-
-<button onclick="openThunder()">
-雷・竜巻
+雨雲の動き(気象庁サイト)
 </button>
 
 <div id="lastUpdate" class="small">
@@ -217,27 +234,6 @@ class="value">
 <div id="rainComment">
 -
 </div>
-
-</div>
-
-<div class="card">
-
-<h3>☔ 広島県監視地点</h3>
-
-<table
-id="pointTable"
-style="
-width:100%;
-border-collapse:collapse;
-text-align:center;
-">
-
-<tr>
- <th>地点</th>
- <th>降水量</th>
-</tr>
-
-</table>
 
 </div>
 
@@ -581,12 +577,13 @@ async function displayLocation(
    info.cls;
 
   document
-  .getElementById(
-   "rainValue"
-  )
-  .innerHTML =
-   rain +
-   " mm/h";
+.getElementById(
+ "rainValue"
+)
+.innerHTML =
+ rain.toFixed(1) +
+ " mm/h";
+
 
   document
   .getElementById(
@@ -789,7 +786,7 @@ async function loadFixedPoints(){
       background:${rainColor(rain)};
       font-weight:bold;
     ">
-      ${rain}
+      ${rain.toFixed(1)}
     </td>
    </tr>
    `;
@@ -810,7 +807,7 @@ async function loadFixedPoints(){
    circle.bindPopup(
    `
    <b>${p.name}</b><br>
-   降水量：${rain} mm/h
+   降水量：${rain.toFixed(1)} mm/h
    `
    );
 
@@ -836,7 +833,7 @@ async function loadFixedPoints(){
  .innerHTML =
  ranking.map(
  p =>
- `${p.name} : ${p.rain} mm/h`
+ `${p.name} : ${p.rain.toFixed(1)} mm/h`
  )
  .join("<br>");
 
@@ -945,7 +942,7 @@ async function loadAroundRain(
    cell.innerHTML =
    `
    <b>${p.name}</b><br>
-   ${rain} mm/h
+   ${rain.toFixed(1)} mm/h
    `;
 
    cell.style.background =
