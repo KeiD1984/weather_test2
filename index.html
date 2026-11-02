@@ -868,8 +868,6 @@ async function loadFixedPoints(){
 
  pointMarkers = [];
 
- let ranking = [];
-
  for(const p of fixedPoints){
 
   try{
@@ -891,11 +889,6 @@ const weatherUrl =
 
 const showers =
 data.hourly?.showers?.[0] ?? 0;
-
-   ranking.push({
-    name:p.name,
-    rain:rain
-   });
 
    const instability =
 instabilityLevel(
@@ -990,142 +983,7 @@ ${currentInstability}
 
 </tr>
 `;
-
-}
-
- const dLat = 2 / 111;
-
- const dLon =
- 2 /
- (
- 111 *
- Math.cos(
- lat *
- Math.PI /
- 180
- )
- );
-
- const points = {
-
-  center:{
-   lat,
-   lon,
-   name:"現在地"
-  },
-
-  n:{
-   lat:lat+dLat,
-   lon,
-   name:"北"
-  },
-
-  ne:{
-   lat:lat+dLat,
-   lon:lon+dLon,
-   name:"北東"
-  },
-
-  e:{
-   lat,
-   lon:lon+dLon,
-   name:"東"
-  },
-
-  se:{
-   lat:lat-dLat,
-   lon:lon+dLon,
-   name:"南東"
-  },
-
-  s:{
-   lat:lat-dLat,
-   lon,
-   name:"南"
-  },
-
-  sw:{
-   lat:lat-dLat,
-   lon:lon-dLon,
-   name:"南西"
-  },
-
-  w:{
-   lat,
-   lon:lon-dLon,
-   name:"西"
-  },
-
-  nw:{
-   lat:lat+dLat,
-   lon:lon-dLon,
-   name:"北西"
-  }
-
- };
-
- let maxRain = -1;
- let maxName = "";
-
- for(const key in points){
-
-  try{
-
-   const p = points[key];
-
-   const url =
-   `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation&hourly=cape,showers`;
-
-   const res =
-   await fetch(weatherUrl);
-
-   const data =
-   await res.json();
-
-   const rain =
-   data.current?.precipitation ?? 0;
-
-   const cape =
-   data.hourly?.cape?.[0] ?? 0;
-
-   const showers =
-   weather.hourly?.showers?.[0] ?? 0;
-
-   const cell =
-   document.getElementById(key);
-
-   cell.innerHTML =
-   `
-   <b>${p.name}</b><br>
-   ${rain.toFixed(1)} mm/h
-   `;
-
-   cell.style.background =
-   rainColor(rain);
-
-   if(rain > maxRain){
-
-      maxRain = rain;
-      maxName = p.name;
-
-   }
-
-  }catch{
-
-   document
-   .getElementById(key)
-   .innerHTML =
-   "失敗";
-
-  }
-
- }
-
- document
- .getElementById("maxRain")
- .innerHTML =
- `${maxRain} mm/h (${maxName})`;
-
+    
 }
 
 update();
