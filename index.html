@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>雷雨危険度モニター</title>
+<title>降雨監視モニター</title>
 
 <link rel="stylesheet"
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -815,10 +815,10 @@ async function loadFixedPoints(){
 L.circleMarker(
  [p.lat,p.lon],
  {
-   radius:16,
+   radius:8,
    fillColor:rainColor(rain),
    color:"#ffffff",
-   weight:3,
+   weight:2,
    fillOpacity:1
  }
 )
