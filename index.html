@@ -175,7 +175,15 @@ checked>
 
 <div class="card">
 
-<h3>📍現在地</h3>
+<h3>📍現在地または指定地点</h3>
+
+<div id="coordinates">
+緯度: -
+<br>
+経度: -
+</div>
+
+<br>
 
 <div id="place">
 取得中...
@@ -273,7 +281,7 @@ const fixedPoints = [
   lon:132.9194
  },
  {
-  name:"大和ミュージアム",
+  name:"呉市 大和ミュージアム",
   lat:34.2365,
   lon:132.5656
  },
@@ -466,6 +474,15 @@ async function displayLocation(
  lat,
  lon
 ){
+
+  document.getElementById(
+ "coordinates"
+).innerHTML =
+`
+緯度: ${lat.toFixed(6)}
+<br>
+経度: ${lon.toFixed(6)}
+`;
 
  // 地図が未作成なら作成
 
@@ -783,11 +800,11 @@ async function loadFixedPoints(){
    <tr>
     <td>${p.name}</td>
     <td style="
-      background:${rainColor(rain)};
-      font-weight:bold;
-    ">
-      ${rain.toFixed(1)}
-    </td>
+  background:${rainColor(rain)};
+  font-weight:bold;
+">
+  ${rain.toFixed(1)} mm/h
+</td>
    </tr>
    `;
 
@@ -807,7 +824,7 @@ async function loadFixedPoints(){
    circle.bindPopup(
    `
    <b>${p.name}</b><br>
-   降水量：${rain.toFixed(1)} mm/h
+   現在地または指定地点の降水量：${rain.toFixed(1)} mm/h
    `
    );
 
