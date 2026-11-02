@@ -637,9 +637,8 @@ async function displayLocation(
 
  try{
 
-
- const url =
- `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation&hourly=cape,showers`; 
+  const weatherUrl =
+`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=precipitation&hourly=cape,showers`;
 
   const weatherRes =
   await fetch(
@@ -653,7 +652,7 @@ async function displayLocation(
   weather.current?.precipitation ?? 0;
 
   const cape =
-data.hourly?.cape?.[0] ?? 0;
+weather.hourly?.cape?.[0] ?? 0;
 
 const showers =
 data.hourly?.showers?.[0] ?? 0;
@@ -840,12 +839,13 @@ async function loadFixedPoints(){
  );
 
  table.innerHTML =
- `
- <tr>
-  <th>地点</th>
-  <th>降水量</th>
- </tr>
- `;
+`
+<tr>
+ <th>地点</th>
+ <th>降水量</th>
+ <th>大気不安定度(参考)</th>
+</tr>
+`;
 
  pointMarkers.forEach(
   m => map.removeLayer(m)
@@ -859,17 +859,23 @@ async function loadFixedPoints(){
 
   try{
 
-   const url =
+   const weatherUrl =
    `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation`;
 
    const res =
-   await fetch(url);
+   await fetch(weatherUrl);
 
    const data =
    await res.json();
 
    const rain =
    data.current?.precipitation ?? 0;
+
+   const cape =
+   data.hourly?.cape?.[0] ?? 0;
+
+   const showers =
+   data.hourly?.showers?.[0] ?? 0;
 
    ranking.push({
     name:p.name,
@@ -1056,16 +1062,22 @@ async function loadAroundRain(
    const p = points[key];
 
    const url =
-   `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation`;
+   `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=precipitation&hourly=cape,showers`;
 
    const res =
-   await fetch(url);
+   await fetch(weatherUrl);
 
    const data =
    await res.json();
 
    const rain =
    data.current?.precipitation ?? 0;
+
+   const cape =
+   data.hourly?.cape?.[0] ?? 0;
+
+   const showers
+   data.hourly?.showers?.[0] ?? 0;
 
    const cell =
    document.getElementById(key);
