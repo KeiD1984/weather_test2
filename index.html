@@ -259,6 +259,8 @@ let timer;
 let manualMarker;
 let pointMarkers = [];
 
+let currentRain = 0;
+
 const fixedPoints = [
  {
   name:"広島駅",
@@ -579,6 +581,8 @@ async function displayLocation(
   const rain =
   weather.current?.precipitation ?? 0;
 
+  currentRain = rain;
+
   const info =
   rainInfo(
    rain
@@ -837,6 +841,19 @@ async function loadFixedPoints(){
   }
 
  }
+
+table.innerHTML +=
+`
+<tr>
+  <td>現在地または指定地点</td>
+  <td style="
+    background:${rainColor(currentRain)};
+    font-weight:bold;
+  ">
+    ${currentRain.toFixed(1)} mm/h
+  </td>
+</tr>
+`;
 
  ranking.sort(
  (a,b)=>
