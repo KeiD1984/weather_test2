@@ -646,7 +646,7 @@ function returnToCurrentLocation(){
  "modeInfo"
 ).innerHTML =
  "現在：現在地監視中";
- 
+
  navigator.geolocation.getCurrentPosition(
 
   async function(position){
@@ -790,16 +790,27 @@ async function displayLocation(
   const weatherUrl =
 `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=precipitation&hourly=cape,showers`;
 
-  const weatherRes =
-  await fetch(
-   weatherUrl
-  );
+const weatherRes =
+await fetch(
+ weatherUrl
+);
 
-  const weather =
-  await weatherRes.json();
+const weather =
+await weatherRes.json();
 
-  const rain =
-  weather.current?.precipitation ?? 0;
+console.log(
+ "Current Time:",
+ weather.current.time
+);
+
+console.log(
+ "Hourly Time[0]:",
+ weather.hourly.time[0]
+);
+
+const rain =
+weather.current?.precipitation ?? 0;
+
 
 if(marker){
 
