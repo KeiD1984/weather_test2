@@ -222,7 +222,7 @@ style="width:100%;">
 指定地点を表示
 </button>
 
-<button onclick="update()">
+<button onclick="returnToCurrentLocation()">
 現在地へ戻る
 </button>
 
@@ -608,6 +608,41 @@ async function update(){
 
 }
 
+function returnToCurrentLocation(){
+
+ navigator.geolocation.getCurrentPosition(
+
+  async function(position){
+
+   const lat =
+   position.coords.latitude;
+
+   const lon =
+   position.coords.longitude;
+
+   await displayLocation(
+    lat,
+    lon
+   );
+
+   map.setView(
+    [lat,lon],
+    11
+   );
+
+  },
+
+  geoError,
+
+  {
+   enableHighAccuracy:true,
+   timeout:10000
+  }
+
+ );
+
+}
+
 async function success(
  position
 ){
@@ -621,6 +656,11 @@ async function success(
  await displayLocation(
   lat,
   lon
+ );
+
+ map.setView(
+  [lat,lon],
+  11
  );
 
 }
@@ -833,24 +873,6 @@ async function showManualLocation(){
   lat,
   lon
  );
-
- if(manualMarker){
-
- map.removeLayer(
-  manualMarker
- );
-
-}
-
-manualMarker =
-L.marker(
- [lat,lon]
-)
-.addTo(map)
-.bindPopup(
- "指定地点"
-)
-.openPopup();
 
 }
 
