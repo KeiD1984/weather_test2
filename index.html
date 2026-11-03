@@ -190,6 +190,18 @@ checked>
 取得中...
 </div>
 
+<br>
+
+<div
+ id="modeInfo"
+ style="
+ font-weight:bold;
+ color:#1565c0;
+ "
+>
+現在：現在地監視中
+</div>
+
 </div>
 
 <div class="card">
@@ -355,6 +367,9 @@ let manualMarker;
 let pointMarkers = [];
 
 let currentRain = 0;
+
+let fixedLat = null;
+let fixedLon = null;
 
 let currentInstability = "-";
 let currentInstabilityColor = "#eeeeee";
@@ -597,6 +612,20 @@ function instabilityLevel(
 
 async function update(){
 
+ if(
+   fixedLat !== null &&
+   fixedLon !== null
+ ){
+
+   displayLocation(
+    fixedLat,
+    fixedLon
+   );
+
+   return;
+
+ }
+
  navigator.geolocation.getCurrentPosition(
   success,
   geoError,
@@ -610,6 +639,14 @@ async function update(){
 
 function returnToCurrentLocation(){
 
+  fixedLat = null;
+  fixedLon = null;
+
+  document.getElementById(
+ "modeInfo"
+).innerHTML =
+ "現在：現在地監視中";
+ 
  navigator.geolocation.getCurrentPosition(
 
   async function(position){
@@ -868,6 +905,14 @@ async function showManualLocation(){
   return;
 
  }
+
+ fixedLat = lat;
+ fixedLon = lon;
+
+ document.getElementById(
+ "modeInfo"
+).innerHTML =
+ "現在：指定地点監視中";
 
  await displayLocation(
   lat,
